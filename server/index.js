@@ -1,15 +1,28 @@
 const { ApolloServer } = require("apollo-server");
 
 const typeDefs = `
-  type Query {
-    totalPhotos: Int!
+  # 加入 Photo 型態定義
+  type Photo {
+    id: ID!
+    url: String!
+    name: String!
+    description: String
   }
   
+  # 從 allPhotos 回傳 Photo
+  type Query {
+    totalPhotos: Int!
+    allPhotos: [Photo!]!
+  }
+  
+  # 從 mutation 回傳新貼出的照片
   type Mutation {
-    postPhoto(name: String!, description: String): Boolean!
+    postPhoto(name: String!, description: String): Photo!
   }
 `;
 
+// 將遞增這個變數來產生不重複的 id
+var _id = 0;
 // 照片在記憶體內的資料型態
 var photos = [];
 
@@ -17,14 +30,26 @@ const resolvers = {
   Query: {
     // 回傳 photos 陣列的長度
     totalPhotos: () => photos.length,
+    allPhotos: () => photos,
   },
 
   // Mutation 與 postPhoto 解析函式
   Mutation: {
     postPhoto(parent, args) {
-      photos.push(args);
-      return true;
+      // 建立新照片，與產生一個 id
+      var newPhoto = {
+        id: _id++,
+        ...args,
+      };
+      photos.push(newPhoto);
+
+      // 回傳新照片
+      return newPhoto;
     },
+  },
+
+  Photo: {
+    url: (parent) => `http://yoursite.com/images/${parent.id}.jpg`,
   },
 };
 
