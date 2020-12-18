@@ -4,11 +4,27 @@ const typeDefs = `
   type Query {
     totalPhotos: Int!
   }
+  
+  type Mutation {
+    postPhoto(name: String!, description: String): Boolean!
+  }
 `;
+
+// 照片在記憶體內的資料型態
+var photos = [];
 
 const resolvers = {
   Query: {
-    totalPhotos: () => 42,
+    // 回傳 photos 陣列的長度
+    totalPhotos: () => photos.length,
+  },
+
+  // Mutation 與 postPhoto 解析函式
+  Mutation: {
+    postPhoto(parent, args) {
+      photos.push(args);
+      return true;
+    },
   },
 };
 
