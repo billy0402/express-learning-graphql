@@ -1,12 +1,27 @@
 const { ApolloServer } = require("apollo-server");
 
 const typeDefs = `
+  enum PhotoCategory {
+    SELFIE
+    PORTRAIT
+    ACTION
+    LANDSCAPE
+    GRAPHIC
+  }
+  
   # 加入 Photo 型態定義
   type Photo {
     id: ID!
     url: String!
     name: String!
     description: String
+    category: PhotoCategory!
+  }
+  
+  input PostPhotoInput {
+    name: String!
+    description: String
+    category: PhotoCategory=PORTRAIT
   }
   
   # 從 allPhotos 回傳 Photo
@@ -17,7 +32,7 @@ const typeDefs = `
   
   # 從 mutation 回傳新貼出的照片
   type Mutation {
-    postPhoto(name: String!, description: String): Photo!
+    postPhoto(input: PostPhotoInput!): Photo!
   }
 `;
 
@@ -39,7 +54,7 @@ const resolvers = {
       // 建立新照片，與產生一個 id
       var newPhoto = {
         id: _id++,
-        ...args,
+        ...args.input,
       };
       photos.push(newPhoto);
 
