@@ -8,6 +8,11 @@ enum PhotoCategory {
   GRAPHIC
 }
 
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
 type User {
   githubLogin: ID!
   name: String
@@ -44,5 +49,7 @@ type Query {
 
 # 從 mutation 回傳新貼出的照片
 type Mutation {
+  # https://github.com/login/oauth/authorize?client_id=YOUR-ID-HERE&scope=user
+  githubAuth(code: String!): AuthPayload!
   postPhoto(input: PostPhotoInput!): Photo!
 }
