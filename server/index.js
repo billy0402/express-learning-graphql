@@ -9,6 +9,13 @@ const typeDefs = `
     GRAPHIC
   }
   
+  type User {
+    githubLogin: ID!
+    name: String
+    avatar: String
+    postedPhotos: [Photo!]!
+  }
+  
   # 加入 Photo 型態定義
   type Photo {
     id: ID!
@@ -16,6 +23,7 @@ const typeDefs = `
     name: String!
     description: String
     category: PhotoCategory!
+    postedBy: User!
   }
   
   input PostPhotoInput {
@@ -36,10 +44,36 @@ const typeDefs = `
   }
 `;
 
+var users = [
+  { githubLogin: "mHattrup", name: "Mike Hattrup" },
+  { githubLogin: "gPlake", name: "Glen Plake" },
+  { githubLogin: "sSchmidt", name: "Scot Schmidt" },
+];
 // 將遞增這個變數來產生不重複的 id
 var _id = 0;
 // 照片在記憶體內的資料型態
-var photos = [];
+var photos = [
+  {
+    id: "1",
+    name: "Dropping the Heart Chute",
+    description: "The heart chute is one of my favorite chutes",
+    category: "ACTION",
+    githubUser: "gPlake",
+  },
+  {
+    id: "2",
+    name: "Enjoying the sunshine",
+    category: "SELFIE",
+    githubUser: "sSchmidt",
+  },
+  {
+    id: "3",
+    name: "Gunbarrel 25",
+    description: "25 laps on gunbarrel today",
+    category: "LANDSCAPE",
+    githubUser: "sSchmidt",
+  },
+];
 
 const resolvers = {
   Query: {
@@ -65,6 +99,14 @@ const resolvers = {
 
   Photo: {
     url: (parent) => `http://yoursite.com/images/${parent.id}.jpg`,
+    postedBy: (parent) => {
+      return users.find((user) => user.githubLogin === parent.githubUser);
+    },
+  },
+  User: {
+    postedPhotos: (parent) => {
+      return photos.filter((photo) => photo.githubUser === parent.githubLogin);
+    },
   },
 };
 
