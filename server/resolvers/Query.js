@@ -1,4 +1,6 @@
 module.exports = {
+  me: (parent, args, { currentUser }) => currentUser,
+
   // 回傳 photos 陣列的長度
   totalPhotos: (parent, args, { db }) =>
     db.collection("photos").estimatedDocumentCount(),

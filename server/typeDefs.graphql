@@ -41,6 +41,7 @@ input PostPhotoInput {
 
 # 從 allPhotos 回傳 Photo
 type Query {
+  me: User
   totalPhotos: Int!
   allPhotos: [Photo!]!
   totalUsers: Int!
