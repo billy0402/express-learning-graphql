@@ -13,3 +13,19 @@
 
 ## database
 - [MongoDB](https://www.mongodb.com/)
+```sql
+use admin;
+db.createUser(
+  {
+    user: "user",
+    pwd: "pwd",
+    roles: [
+        {
+            role: "userAdminAnyDatabase",
+            db: "admin"
+        },
+        "readWriteAnyDatabase"
+    ]
+  }
+);
+```
