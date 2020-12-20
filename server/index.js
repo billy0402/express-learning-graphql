@@ -1,6 +1,9 @@
 const { ApolloServer } = require("apollo-server");
+const { GraphQLScalarType } = require("graphql");
 
 const typeDefs = `
+  scalar DateTime
+  
   enum PhotoCategory {
     SELFIE
     PORTRAIT
@@ -26,6 +29,7 @@ const typeDefs = `
     category: PhotoCategory!
     postedBy: User!
     taggedUsers: [User!]!
+    created: DateTime!
   }
   
   input PostPhotoInput {
@@ -61,12 +65,14 @@ var photos = [
     description: "The heart chute is one of my favorite chutes",
     category: "ACTION",
     githubUser: "gPlake",
+    created: "3-28-1977",
   },
   {
     id: "2",
     name: "Enjoying the sunshine",
     category: "SELFIE",
     githubUser: "sSchmidt",
+    created: "1-2-1985",
   },
   {
     id: "3",
@@ -74,6 +80,7 @@ var photos = [
     description: "25 laps on gunbarrel today",
     category: "LANDSCAPE",
     githubUser: "sSchmidt",
+    created: "2018-04-15T19:09:57.308Z",
   },
 ];
 var tags = [
@@ -97,6 +104,7 @@ const resolvers = {
       var newPhoto = {
         id: _id++,
         ...args.input,
+        created: new Date(),
       };
       photos.push(newPhoto);
 
@@ -132,6 +140,14 @@ const resolvers = {
         // 將 photoId 陣列轉換成照片物件陣列
         .map((photoId) => photos.find((photo) => photo.id === photoId)),
   },
+
+  DateTime: new GraphQLScalarType({
+    name: "DateTime",
+    description: "A valid date time value",
+    serialize: (value) => new Date(value).toISOString(),
+    parseValue: (value) => new Date(value),
+    parseLiteral: (ast) => ast.value,
+  }),
 };
 
 // 建立伺服器的新實例
