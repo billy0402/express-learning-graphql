@@ -1,0 +1,46 @@
+scalar DateTime
+
+enum PhotoCategory {
+  SELFIE
+  PORTRAIT
+  ACTION
+  LANDSCAPE
+  GRAPHIC
+}
+
+type User {
+  githubLogin: ID!
+  name: String
+  avatar: String
+  postedPhotos: [Photo!]!
+  inPhotos: [Photo!]!
+}
+
+# 加入 Photo 型態定義
+type Photo {
+  id: ID!
+  url: String!
+  name: String!
+  description: String
+  category: PhotoCategory!
+  postedBy: User!
+  taggedUsers: [User!]!
+  created: DateTime!
+}
+
+input PostPhotoInput {
+  name: String!
+  description: String
+  category: PhotoCategory = PORTRAIT
+}
+
+# 從 allPhotos 回傳 Photo
+type Query {
+  totalPhotos: Int!
+  allPhotos: [Photo!]!
+}
+
+# 從 mutation 回傳新貼出的照片
+type Mutation {
+  postPhoto(input: PostPhotoInput!): Photo!
+}
