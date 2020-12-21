@@ -4,10 +4,10 @@ const { users, photos, tags } = require("../fixtures/data");
 
 module.exports = {
   Photo: {
-    url: (parent) => `http://yoursite.com/images/${parent.id}.jpg`,
-    postedBy: (parent) => {
-      return users.find((user) => user.githubLogin === parent.githubUser);
-    },
+    id: (parent) => parent.id || parent._id,
+    url: (parent) => `/images/photos/${parent._id}.jpg`,
+    postedBy: (parent, args, { db }) =>
+      db.collection("users").findOne({ githubLogin: parent.userId }),
     taggedUsers: (parent) =>
       tags
         // 回傳一個只含有當前照片的 tag 陣列

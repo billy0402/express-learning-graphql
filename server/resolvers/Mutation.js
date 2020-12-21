@@ -3,9 +3,6 @@ const { photos } = require("../fixtures/data");
 
 require("dotenv").config();
 
-// 將遞增這個變數來產生不重複的 id
-var _id = 0;
-
 // Mutation 與 postPhoto 解析函式
 module.exports = {
   async githubAuth(parent, { code }, { db }) {
@@ -43,14 +40,22 @@ module.exports = {
     return { user, token: access_token };
   },
 
-  postPhoto(parent, args) {
-    // 建立新照片，與產生一個 id
-    var newPhoto = {
-      id: _id++,
+  async postPhoto(parent, args, { db, currentUser }) {
+    // 如果 context 裡面沒有使用者，就丟出錯誤
+    if (!currentUser) {
+      throw new Error("only an authorized user can post a photo");
+    }
+
+    // 與照片一起儲存當前使用者的 id
+    const newPhoto = {
       ...args.input,
+      userId: currentUser.githubLogin,
       created: new Date(),
     };
-    photos.push(newPhoto);
+
+    // 插入新照片，捕捉資料庫建立的 id
+    const { insertedIds } = await db.collection("photos").insert(newPhoto);
+    newPhoto.id = insertedIds[0];
 
     // 回傳新照片
     return newPhoto;
