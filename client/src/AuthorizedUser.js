@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { Mutation } from 'react-apollo';
+import { Mutation, withApollo } from 'react-apollo';
+import { flowRight } from 'lodash';
 
 import Me from './Me';
 import { GITHUB_AUTH_MUTATION, ROOT_QUERY } from './api';
@@ -29,6 +30,13 @@ class AuthorizedUser extends Component {
     window.location = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=user`;
   }
 
+  logout = () => {
+    localStorage.removeItem('token');
+    let data = this.props.client.readQuery({ query: ROOT_QUERY });
+    data.me = null;
+    this.props.client.writeQuery({ query: ROOT_QUERY, data });
+  };
+
   render() {
     return (
       <Mutation
@@ -42,7 +50,7 @@ class AuthorizedUser extends Component {
             <Me
               signingIn={this.state.signingIn}
               requestCode={this.requestCode}
-              logout={() => localStorage.removeItem('token')}
+              logout={this.logout}
             />
           );
         }}
@@ -51,4 +59,4 @@ class AuthorizedUser extends Component {
   }
 }
 
-export default withRouter(AuthorizedUser);
+export default flowRight(withRouter, withApollo)(AuthorizedUser);

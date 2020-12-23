@@ -1,4 +1,15 @@
-import ApolloClient, { gql } from 'apollo-boost';
+import ApolloClient, { gql, InMemoryCache } from 'apollo-boost';
+import { persistCache } from 'apollo-cache-persist';
+
+const cache = new InMemoryCache();
+persistCache({
+  cache,
+  storage: localStorage,
+});
+if (localStorage['apollo-cache-persist']) {
+  let cacheData = JSON.parse(localStorage['apollo-cache-persist']);
+  cache.restore(cacheData);
+}
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000/graphql',
@@ -10,6 +21,7 @@ const client = new ApolloClient({
       },
     }));
   },
+  cache,
 });
 
 export const ROOT_QUERY = gql`
