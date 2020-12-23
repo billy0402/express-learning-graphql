@@ -1,7 +1,7 @@
 const fetch = require("node-fetch");
+const path = require("path");
 
-const { authorizeWithGithub } = require("../lib");
-const { photos } = require("../fixtures/data");
+const { authorizeWithGithub, uploadStream } = require("../lib");
 
 require("dotenv").config();
 
@@ -92,6 +92,17 @@ module.exports = {
     // 插入新照片，捕捉資料庫建立的 id
     const { insertedIds } = await db.collection("photos").insert(newPhoto);
     newPhoto.id = insertedIds[0];
+
+    const toPath = path.join(
+      __dirname,
+      "..",
+      "assets",
+      "photos",
+      `${newPhoto.id}.jpg`
+    );
+
+    const { stream } = await args.input.file;
+    await uploadStream(stream, toPath);
 
     await pubsub.publish("photo-added", { newPhoto });
 

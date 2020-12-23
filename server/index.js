@@ -5,6 +5,7 @@ const expressPlayground = require("graphql-playground-middleware-express")
 const { createServer } = require("http");
 const { MongoClient } = require("mongodb");
 const { readFileSync } = require("fs");
+const path = require("path");
 
 require("dotenv").config();
 const typeDefs = readFileSync("./typeDefs.graphql", "UTF-8");
@@ -42,6 +43,10 @@ async function start() {
   // 建立首頁路由
   app.get("/", (req, res) => res.end("Welcome to the PhotoShare API"));
   app.get("/playground", expressPlayground({ endpoint: "/graphql" }));
+  app.use(
+    "/images/photos",
+    express.static(path.join(__dirname, "assets", "photos"))
+  );
 
   const httpServer = createServer(app);
   server.installSubscriptionHandlers(httpServer);

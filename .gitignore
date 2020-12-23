@@ -7,6 +7,9 @@
 # VSCode
 .vscode/
 
+# Server assets
+server/assets
+
 # Logs
 logs
 *.log

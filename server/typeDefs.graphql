@@ -37,6 +37,7 @@ input PostPhotoInput {
   name: String!
   description: String
   category: PhotoCategory = PORTRAIT
+  file: Upload!
 }
 
 # 從 allPhotos 回傳 Photo
