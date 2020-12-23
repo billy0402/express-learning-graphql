@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { Mutation } from 'react-apollo';
 
+import Me from './Me';
 import { GITHUB_AUTH_MUTATION, ROOT_QUERY } from './api';
 
 require('dotenv').config();
@@ -38,9 +39,11 @@ class AuthorizedUser extends Component {
         {(mutation) => {
           this.githubAuthMutation = mutation;
           return (
-            <button onClick={this.requestCode} disabled={this.state.signingIn}>
-              Sign In with GitHub
-            </button>
+            <Me
+              signingIn={this.state.signingIn}
+              requestCode={this.requestCode}
+              logout={() => localStorage.removeItem('token')}
+            />
           );
         }}
       </Mutation>
