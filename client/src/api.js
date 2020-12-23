@@ -13,4 +13,14 @@ export const ROOT_QUERY = gql`
   }
 `;
 
+export const ADD_FAKE_USERS_MUTATION = gql`
+  mutation fakeUserAuth($count: Int!) {
+    addFakeUsers(count: $count) {
+      githubLogin
+      name
+      avatar
+    }
+  }
+`;
+
 export default client;
