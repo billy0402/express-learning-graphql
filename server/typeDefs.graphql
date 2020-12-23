@@ -52,5 +52,7 @@ type Query {
 type Mutation {
   # https://github.com/login/oauth/authorize?client_id=YOUR-ID-HERE&scope=user
   githubAuth(code: String!): AuthPayload!
+  addFakeUsers(count: Int = 1): [User!]!
+  fakeUserAuth(githubLogin: ID!): AuthPayload!
   postPhoto(input: PostPhotoInput!): Photo!
 }

@@ -1,3 +1,5 @@
+const fetch = require("node-fetch");
+
 const { authorizeWithGithub } = require("../lib");
 const { photos } = require("../fixtures/data");
 
@@ -38,6 +40,36 @@ module.exports = {
 
     // 回傳使用者資料與他們的權杖
     return { user, token: access_token };
+  },
+
+  async addFakeUsers(parent, { count }, { db }) {
+    const randomUserApi = `https://randomuser.me/api/?results=${count}`;
+    const { results } = await fetch(randomUserApi)
+      .then((res) => res.json())
+      .catch((err) => console.error(JSON.stringify(err)));
+
+    const users = results.map((result) => ({
+      githubLogin: result.login.username,
+      name: `${result.name.first} ${result.name.last}`,
+      avatar: result.picture.thumbnail,
+      githubToken: result.login.sha1,
+    }));
+
+    await db.collection("users").insert(users);
+
+    return users;
+  },
+
+  async fakeUserAuth(parent, { githubLogin }, { db }) {
+    const user = await db.collection("users").findOne({ githubLogin });
+    if (!user) {
+      throw Error(`Cannot find user with githubLogin "${githubLogin}"`);
+    }
+
+    return {
+      token: user.githubToken,
+      user,
+    };
   },
 
   async postPhoto(parent, args, { db, currentUser }) {
