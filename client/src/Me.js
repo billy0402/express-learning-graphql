@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import { Query } from 'react-apollo';
 
 import { ROOT_QUERY } from './api';
@@ -24,6 +25,7 @@ const CurrentUser = ({ name, avatar, logout }) => (
     <img src={avatar} alt='avatar' width={48} height={48} />
     <h1>{name}</h1>
     <button onClick={logout}>logout</button>
+    <NavLink to='/newPhoto'>Post Photo</NavLink>
   </div>
 );
 

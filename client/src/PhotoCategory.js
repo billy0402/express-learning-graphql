@@ -1,0 +1,7 @@
+export const PhotoCategory = {
+  SELFIE: 'SELFIE',
+  PORTRAIT: 'PORTRAIT',
+  ACTION: 'ACTION',
+  LANDSCAPE: 'LANDSCAPE',
+  GRAPHIC: 'GRAPHIC',
+};

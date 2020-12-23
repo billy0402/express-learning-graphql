@@ -1,10 +1,12 @@
-import React, { Component } from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import React, { Component, Fragment } from 'react';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { withApollo } from 'react-apollo';
 
 import './App.css';
 import AuthorizedUser from './AuthorizedUser';
 import Users from './Users';
+import Photos from './Photos';
+import PostPhoto from './PostPhoto';
 import { LISTEN_FOR_USERS, ROOT_QUERY } from './api';
 
 class App extends Component {
@@ -27,10 +29,25 @@ class App extends Component {
   render() {
     return (
       <BrowserRouter>
-        <div>
-          <AuthorizedUser />
-          <Users />
-        </div>
+        <Switch>
+          <Route
+            exact
+            path='/'
+            component={() => (
+              <Fragment>
+                <AuthorizedUser />
+                <Users />
+                <Photos />
+              </Fragment>
+            )}
+          />
+          <Route path='/newPhoto' component={PostPhoto} />
+          <Route
+            component={({ location }) => (
+              <h1>'{location.pathname}' not found</h1>
+            )}
+          />
+        </Switch>
       </BrowserRouter>
     );
   }
