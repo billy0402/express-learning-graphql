@@ -2,6 +2,7 @@ const { ApolloServer } = require("apollo-server-express");
 const express = require("express");
 const expressPlayground = require("graphql-playground-middleware-express")
   .default;
+const { createServer } = require("http");
 const { MongoClient } = require("mongodb");
 const { readFileSync } = require("fs");
 
@@ -40,8 +41,11 @@ async function start() {
   app.get("/", (req, res) => res.end("Welcome to the PhotoShare API"));
   app.get("/playground", expressPlayground({ endpoint: "/graphql" }));
 
+  const httpServer = createServer(app);
+  server.installSubscriptionHandlers(httpServer);
+
   // 監聽特定連接埠
-  app.listen({ port: 4000 }, () =>
+  httpServer.listen({ port: 4000 }, () =>
     console.log(
       `GraphQL Service running @ http://localhost:4000${server.graphqlPath}`
     )
