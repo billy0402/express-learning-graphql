@@ -72,7 +72,7 @@ module.exports = {
     };
   },
 
-  async postPhoto(parent, args, { db, currentUser }) {
+  async postPhoto(parent, args, { db, currentUser, pubsub }) {
     // 如果 context 裡面沒有使用者，就丟出錯誤
     if (!currentUser) {
       throw new Error("only an authorized user can post a photo");
@@ -88,6 +88,8 @@ module.exports = {
     // 插入新照片，捕捉資料庫建立的 id
     const { insertedIds } = await db.collection("photos").insert(newPhoto);
     newPhoto.id = insertedIds[0];
+
+    await pubsub.publish("photo-added", { newPhoto });
 
     // 回傳新照片
     return newPhoto;
