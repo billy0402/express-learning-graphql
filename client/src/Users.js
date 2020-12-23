@@ -3,13 +3,6 @@ import { Mutation, Query } from 'react-apollo';
 
 import { ADD_FAKE_USERS_MUTATION, ROOT_QUERY } from './api';
 
-const updateUserCache = (cache, { data: { addFakeUsers } }) => {
-  let data = cache.readQuery({ query: ROOT_QUERY });
-  data.totalUsers += addFakeUsers.length;
-  data.allUsers = [...data.allUsers, ...addFakeUsers];
-  cache.writeQuery({ query: ROOT_QUERY, data });
-};
-
 const Users = () => (
   <Query query={ROOT_QUERY} fetchPolicy='cache-and-network'>
     {({ data, loading, refetch }) =>
@@ -30,11 +23,7 @@ const UserList = ({ count, users, refetchUsers }) => (
   <div>
     <p>{count} Users</p>
     <button onClick={() => refetchUsers()}>Refetch Users</button>
-    <Mutation
-      mutation={ADD_FAKE_USERS_MUTATION}
-      variables={{ count: 1 }}
-      update={updateUserCache}
-    >
+    <Mutation mutation={ADD_FAKE_USERS_MUTATION} variables={{ count: 1 }}>
       {(addFakeUsers) => <button onClick={addFakeUsers}>Add Fake Users</button>}
     </Mutation>
     <ul>

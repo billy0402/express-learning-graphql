@@ -88,4 +88,14 @@ export const GITHUB_AUTH_MUTATION = gql`
   }
 `;
 
+export const LISTEN_FOR_USERS = gql`
+  subscription {
+    newUser {
+      githubLogin
+      name
+      avatar
+    }
+  }
+`;
+
 export default client;
