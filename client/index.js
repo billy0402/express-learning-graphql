@@ -1,18 +1,24 @@
-const query = "{totalUsers, totalPhotos}";
-const url = "http://localhost:4000/graphql";
-const options = {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ query }),
-};
+const { request } = require("graphql-request");
 
-fetch(url, options)
-  .then((res) => res.json())
-  .then(
-    ({ data }) => `
-  <p>users: ${data.totalUsers}</p>
-  <p>photos: ${data.totalPhotos}</p>
-  `
-  )
-  .then((text) => (document.body.innerHTML = text))
-  .catch(console.error);
+const url = "http://localhost:4000/graphql";
+
+const query = `
+  query {
+    allUsers {
+      name
+      avatar
+    }
+  }
+`;
+request(url, query).then(console.log).catch(console.error);
+
+const mutation = `
+  mutation populate($count: Int!) {
+    addFakeUsers(count: $count) {
+      githubLogin
+      name
+    }
+  }
+`;
+const variables = { count: 3 };
+request(url, mutation, variables).then(console.log).catch(console.error);
