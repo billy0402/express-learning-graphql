@@ -7,7 +7,7 @@ require("dotenv").config();
 
 // Mutation 與 postPhoto 解析函式
 module.exports = {
-  async githubAuth(parent, { code }, { db }) {
+  async githubAuth(parent, { code }, { db, pubsub }) {
     // 從 GitHub 取得資料
     let {
       message,
@@ -38,11 +38,13 @@ module.exports = {
       .collection("users")
       .replaceOne({ githubLogin: login }, lastUserInfo, { upsert: true });
 
+    await pubsub.publish("user-added", { newUser: user });
+
     // 回傳使用者資料與他們的權杖
     return { user, token: access_token };
   },
 
-  async addFakeUsers(parent, { count }, { db }) {
+  async addFakeUsers(parent, { count }, { db, pubsub }) {
     const randomUserApi = `https://randomuser.me/api/?results=${count}`;
     const { results } = await fetch(randomUserApi)
       .then((res) => res.json())
@@ -56,6 +58,8 @@ module.exports = {
     }));
 
     await db.collection("users").insert(users);
+
+    await users.forEach((newUser) => pubsub.publish("user-added", { newUser }));
 
     return users;
   },
