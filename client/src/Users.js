@@ -4,7 +4,7 @@ import { Query, Mutation } from 'react-apollo';
 import { ROOT_QUERY, ADD_FAKE_USERS_MUTATION } from './api';
 
 const Users = () => (
-  <Query query={ROOT_QUERY}>
+  <Query query={ROOT_QUERY} fetchPolicy='cache-and-network'>
     {({ data, loading, refetch }) =>
       loading ? (
         <p>loading users</p>
