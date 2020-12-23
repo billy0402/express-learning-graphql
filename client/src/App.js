@@ -1,23 +1,16 @@
-import logo from './logo.svg';
 import './App.css';
+import { addUser } from './api';
 
-function App() {
+function App({ users = [] }) {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {users.map((user) => (
+        <div key={user.githubLogin}>
+          <img src={user.avatar} alt='avatar' />
+          {user.name}
+        </div>
+      ))}
+      <button onClick={addUser}>Add User</button>
     </div>
   );
 }
