@@ -1,31 +1,23 @@
-import { request } from 'graphql-request';
+import ApolloClient, { gql } from 'apollo-boost';
 
-const url = 'http://localhost:4000/graphql';
+const client = new ApolloClient({ uri: 'http://localhost:4000/graphql' });
 
-const query = `
-  query {
-    allUsers {
-      githubLogin
-      name
-      avatar
-    }
+const query = gql`
+  {
+    totalUsers
+    totalPhotos
   }
 `;
 
-const mutation = `
-  mutation populate($count: Int!) {
-    addFakeUsers(count: $count) {
-      githubLogin
-    }
-  }
-`;
+client
+  .query({ query })
+  .then(({ data }) => console.log('data', data))
+  .catch(console.error);
 
-const requestAndRender = (render) =>
-  request(url, query).then(render).catch(console.error);
+console.log('cache', client.extract());
+client
+  .query({ query })
+  .then(() => console.log('cache', client.extract()))
+  .catch(console.error);
 
-const addUser = () =>
-  request(url, mutation, { count: 1 })
-    .then(requestAndRender)
-    .catch(console.error);
-
-export { requestAndRender, addUser };
+export default client;
