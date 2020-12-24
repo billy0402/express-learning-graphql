@@ -34,3 +34,8 @@ db.createUser(
 - [React](https://zh-hant.reactjs.org/)
 - [Apollo](https://www.apollographql.com/docs/)
 - [GraphQL](https://graphql.org/)
+
+## community
+- [schema 拼接](https://www.graphql-tools.com/docs/introduction/)
+- [Prisma](https://www.prisma.io/)
+- [AWS AppSync](https://aws.amazon.com/tw/appsync/)
