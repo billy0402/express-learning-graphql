@@ -30,6 +30,8 @@ async function start() {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
+    // https://engine.apollographql.com
+    engine: true,
     validationRules: [
       depthLimit(5),
       createComplexityLimitRule(1000, {
