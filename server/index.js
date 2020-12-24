@@ -7,6 +7,7 @@ const { MongoClient } = require("mongodb");
 const { readFileSync } = require("fs");
 const path = require("path");
 const { performance } = require("perf_hooks");
+const depthLimit = require("graphql-depth-limit");
 
 require("dotenv").config();
 const typeDefs = readFileSync("./typeDefs.graphql", "UTF-8");
@@ -28,6 +29,7 @@ async function start() {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
+    validationRules: [depthLimit(5)],
     context: async ({ req, connection }) => {
       const githubToken = req
         ? req.headers.authorization
