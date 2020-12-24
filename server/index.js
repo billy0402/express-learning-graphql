@@ -6,6 +6,7 @@ const { createServer } = require("http");
 const { MongoClient } = require("mongodb");
 const { readFileSync } = require("fs");
 const path = require("path");
+const { performance } = require("perf_hooks");
 
 require("dotenv").config();
 const typeDefs = readFileSync("./typeDefs.graphql", "UTF-8");
@@ -33,7 +34,7 @@ async function start() {
         : connection.context.Authorization;
       const currentUser = await db.collection("users").findOne({ githubToken });
 
-      return { db, currentUser, pubsub };
+      return { db, currentUser, pubsub, timestamp: performance.now() };
     },
   });
 
@@ -50,6 +51,8 @@ async function start() {
 
   const httpServer = createServer(app);
   server.installSubscriptionHandlers(httpServer);
+
+  httpServer.timeout = 5000;
 
   // 監聽特定連接埠
   httpServer.listen({ port: 4000 }, () =>
