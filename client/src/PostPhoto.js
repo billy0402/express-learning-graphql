@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import { Mutation } from 'react-apollo';
 
 import './PostPhoto.css';
 import { PhotoCategory } from './PhotoCategory';
+import { POST_PHOTO_MUTATION, ROOT_QUERY } from './api';
 
 class PostPhoto extends Component {
   state = {
@@ -11,9 +13,15 @@ class PostPhoto extends Component {
     file: '',
   };
 
-  postPhoto = (mutation) => {
-    console.log('todo: post photo');
-    console.log(this.state);
+  postPhoto = async (mutation) => {
+    await mutation({ variables: { input: this.state } }).catch(console.error);
+    this.props.history.replace('/');
+  };
+
+  updatePhotos = (cache, { data: { postPhoto } }) => {
+    const data = cache.readQuery({ query: ROOT_QUERY });
+    data.allPhotos = [...data.allPhotos, postPhoto];
+    cache.writeQuery({ query: ROOT_QUERY, data });
   };
 
   render() {
@@ -60,7 +68,13 @@ class PostPhoto extends Component {
         />
 
         <div>
-          <button onClick={() => this.postPhoto()}>Post Photo</button>
+          <Mutation mutation={POST_PHOTO_MUTATION} update={this.updatePhotos}>
+            {(mutation) => (
+              <button onClick={() => this.postPhoto(mutation)}>
+                Post Photo
+              </button>
+            )}
+          </Mutation>
           <button onClick={() => this.props.history.goBack()}>Cancel</button>
         </div>
       </form>

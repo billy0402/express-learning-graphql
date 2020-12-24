@@ -2,10 +2,10 @@ import {
   ApolloClient,
   ApolloLink,
   gql,
-  HttpLink,
   InMemoryCache,
   split,
 } from 'apollo-boost';
+import { createUploadLink } from 'apollo-upload-client';
 import { persistCache } from 'apollo-cache-persist';
 import { WebSocketLink } from 'apollo-link-ws';
 import { getMainDefinition } from 'apollo-utilities';
@@ -20,7 +20,7 @@ if (localStorage['apollo-cache-persist']) {
   cache.restore(cacheData);
 }
 
-const httpLink = new HttpLink({ uri: 'http://localhost:4000/graphql' });
+const httpLink = new createUploadLink({ uri: 'http://localhost:4000/graphql' });
 const authLink = new ApolloLink((operation, forward) => {
   operation.setContext((context) => ({
     headers: {
@@ -100,6 +100,16 @@ export const LISTEN_FOR_USERS = gql`
       githubLogin
       name
       avatar
+    }
+  }
+`;
+
+export const POST_PHOTO_MUTATION = gql`
+  mutation postPhoto($input: PostPhotoInput!) {
+    postPhoto(input: $input) {
+      id
+      name
+      url
     }
   }
 `;
